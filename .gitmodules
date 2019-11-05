@@ -1,0 +1,3 @@
+[submodule "build-for-screen/external-libraries/dav1d"]
+	path = build-for-screen/external-libraries/dav1d
+	url = https://github.com/videolan/dav1d.git

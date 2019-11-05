@@ -1,0 +1,70 @@
+#!/usr/bin/env bash
+#
+# A script to build FFmpeg so that it may be embedded in Screen. Special thanks to Darren Mo for providing a LGPL version 2.1 build script!
+#
+# Copyright (c) 2019 Darren Mo. Licensed under LGPL version 2.1.
+#
+# Modifications by Greg Cotten @ Video Village LLC
+#
+# TODO: Enable the following external libraries in order to
+# support more formats/codecs/protocols.
+#   AviSynth: libavxsynth
+#   BluRay: libbluray
+#   CELT: libcelt
+#   codec2: libcodec2
+#   DASH: libxml2
+#   DVB teletext: libzvbi
+#   Game Music Emu: libgme
+#   Haivision SRT: libsrt
+#   iLBC: libilbc
+#   MOD: libopenmpt
+#   SAMBA: libsmbclient
+#   SFTP: libssh
+#   Speex: libspeex
+#   SVG: librsvg
+
+SCRIPT_DIR="$(dirname "$BASH_SOURCE")"
+cd "$SCRIPT_DIR"
+
+# Hack: We install the external libraries in a directory whose name
+# does not contain spaces because the configure script does not
+# properly handle spaces in the include/library paths returned by
+# pkg-config.
+EXTERNAL_LIBRARIES_DIR="$HOME/Library/co.videovillage.Screen"
+rm -rf "$EXTERNAL_LIBRARIES_DIR"
+external-libraries/build-for-screen "$EXTERNAL_LIBRARIES_DIR" || exit $?
+
+export DESTDIR="$SCRIPT_DIR/build"
+
+cd ..
+
+make clean
+rm -rf "$DESTDIR"
+
+export PKG_CONFIG_PATH="$EXTERNAL_LIBRARIES_DIR/lib/pkgconfig"
+./configure \
+   --prefix="/" \
+   --install-name-dir="@rpath/SwiftFFmpeg.framework/Versions/A/Frameworks" \
+   --disable-static \
+   --enable-shared \
+   --extra-ldflags="-Z -L/usr/lib -F/System/Library/Frameworks" \
+   --disable-programs \
+   --disable-doc \
+   --disable-postproc \
+   --disable-w32threads \
+   --disable-os2threads \
+   --disable-amf \
+   --disable-cuvid \
+   --disable-d3d11va \
+   --disable-dxva2 \
+   --disable-ffnvcodec \
+   --disable-nvdec \
+   --disable-vaapi \
+   --disable-vdpau \
+   --enable-libdav1d \
+   || exit $?
+
+make install || exit $?
+
+cp "$EXTERNAL_LIBRARIES_DIR"/lib/*.dylib "$DESTDIR/lib/"
+rm -rf "$EXTERNAL_LIBRARIES_DIR"
