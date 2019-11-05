@@ -1,0 +1,1 @@
+Simply run `build-for-screen/build-for-screen` and check inside `build-for-screen/build/lib` after it's done for vended dylibs.
