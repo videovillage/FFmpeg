@@ -30,7 +30,7 @@ cd "$SCRIPT_DIR"
 # does not contain spaces because the configure script does not
 # properly handle spaces in the include/library paths returned by
 # pkg-config.
-EXTERNAL_LIBRARIES_DIR="$HOME/Library/co.videovillage.Screen"
+EXTERNAL_LIBRARIES_DIR="$HOME/Library/co.videovillage.ScreenFFmpegBuild"
 rm -rf "$EXTERNAL_LIBRARIES_DIR"
 external-libraries/build-for-screen "$EXTERNAL_LIBRARIES_DIR" || exit $?
 
