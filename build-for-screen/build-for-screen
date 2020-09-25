@@ -26,6 +26,8 @@
 SCRIPT_DIR="$(dirname "$BASH_SOURCE")"
 cd "$SCRIPT_DIR"
 
+# Use export MACOSX_DEPLOYMENT_TARGET=10.13 perhaps?
+
 # Hack: We install the external libraries in a directory whose name
 # does not contain spaces because the configure script does not
 # properly handle spaces in the include/library paths returned by
@@ -44,6 +46,10 @@ rm -rf "$DESTDIR"
 export PKG_CONFIG_PATH="$EXTERNAL_LIBRARIES_DIR/lib/pkgconfig"
 ./configure \
    --prefix="/" \
+   --extra-cflags='-mmacosx-version-min=10.13' \
+   --extra-cxxflags='-mmacosx-version-min=10.13' \
+   --extra-objcflags='-mmacosx-version-min=10.13' \
+   --extra-ldflags='-mmacosx-version-min=10.13' \
    --install-name-dir="@rpath/SwiftFFmpeg.framework/Versions/A/Frameworks" \
    --disable-static \
    --enable-shared \
