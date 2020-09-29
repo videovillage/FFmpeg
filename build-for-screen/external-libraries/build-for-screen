@@ -11,6 +11,10 @@ if [ "$#" -ne 1 ]; then
    exit 2
 fi
 
+export LDFLAGS='-mmacosx-version-min=10.13'
+export CFLAGS='-mmacosx-version-min=10.13'
+export CXXFLAGS='-mmacosx-version-min=10.13'
+
 PREFIX="$1"
 
 SCRIPT_DIR="$(dirname "$BASH_SOURCE")"
