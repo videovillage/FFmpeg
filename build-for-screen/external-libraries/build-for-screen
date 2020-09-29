@@ -21,11 +21,11 @@ SCRIPT_DIR="$(dirname "$BASH_SOURCE")"
 cd "$SCRIPT_DIR"
 
 cd "dav1d"
-meson --prefix="$PREFIX" build --buildtype release || exit $?
+meson --prefix="$PREFIX" build --default-library=static --buildtype release || exit $?
 ninja install -C build || exit $?
 
-INSTALL_NAME_DIR="@rpath/SwiftFFmpeg.framework/Versions/A/Frameworks"
-for PATH_TO_DYLIB in "$(find -E "$PREFIX/lib" -regex '.*/[^/.]+\.[0123456789]+\.dylib')"; do
-   DYLIB_FILE_NAME="$(basename "$PATH_TO_DYLIB")"
-   install_name_tool -id "$INSTALL_NAME_DIR/$DYLIB_FILE_NAME" "$PATH_TO_DYLIB" || exit $?
-done
+# INSTALL_NAME_DIR="@rpath/SwiftFFmpeg.framework/Versions/A/Frameworks"
+# for PATH_TO_DYLIB in "$(find -E "$PREFIX/lib" -regex '.*/[^/.]+\.[0123456789]+\.dylib')"; do
+#    DYLIB_FILE_NAME="$(basename "$PATH_TO_DYLIB")"
+#    install_name_tool -id "$INSTALL_NAME_DIR/$DYLIB_FILE_NAME" "$PATH_TO_DYLIB" || exit $?
+# done

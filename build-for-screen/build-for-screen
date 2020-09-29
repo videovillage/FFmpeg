@@ -49,11 +49,7 @@ export PKG_CONFIG_PATH="$EXTERNAL_LIBRARIES_DIR/lib/pkgconfig"
    --extra-cflags='-mmacosx-version-min=10.13' \
    --extra-cxxflags='-mmacosx-version-min=10.13' \
    --extra-objcflags='-mmacosx-version-min=10.13' \
-   --extra-ldflags='-mmacosx-version-min=10.13' \
-   --install-name-dir="@rpath/SwiftFFmpeg.framework/Versions/A/Frameworks" \
-   --disable-static \
-   --enable-shared \
-   --extra-ldflags="-Z -L/usr/lib -F/System/Library/Frameworks" \
+   --extra-ldflags='-mmacosx-version-min=10.13 -Z -L/usr/lib -F/System/Library/Frameworks' \
    --disable-programs \
    --disable-doc \
    --disable-postproc \
@@ -72,5 +68,5 @@ export PKG_CONFIG_PATH="$EXTERNAL_LIBRARIES_DIR/lib/pkgconfig"
 
 make install || exit $?
 
-cp "$EXTERNAL_LIBRARIES_DIR"/lib/*.dylib "$DESTDIR/lib/"
+cp "$EXTERNAL_LIBRARIES_DIR"/lib/*.a "$DESTDIR/lib/"
 rm -rf "$EXTERNAL_LIBRARIES_DIR"
