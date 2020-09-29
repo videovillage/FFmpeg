@@ -39,3 +39,4 @@
 /tools/python/__pycache__/
 .DS_Store
 /build-for-screen/build
+build/
