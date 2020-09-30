@@ -68,6 +68,8 @@ export PKG_CONFIG_PATH="$EXTERNAL_LIBRARIES_DIR/lib/pkgconfig"
 
 make install || exit $?
 
+cd $SCRIPT_DIR
+
 EXTERNAL_LIBS=$(basename "$EXTERNAL_LIBRARIES_DIR"/lib/*.a)
 EXTERNAL_LIBS_NAMES=""
 
@@ -83,7 +85,46 @@ FFMPEG_LIBS="libavcodec libavdevice libavfilter libavformat libavutil libswresam
 mkdir "$DESTDIR/xcframeworks/"
 
 for LIB in $FFMPEG_LIBS; do
-  xcodebuild -create-xcframework -library "$DESTDIR/lib/$LIB.a" -headers "$DESTDIR/include/$LIB/" -output "$DESTDIR/xcframeworks/$LIB.xcframework"
+  LIB_FRAMEWORK="$DESTDIR/xcframeworks/$LIB.framework"
+
+  # build framework
+  rm -rf $LIB_FRAMEWORK
+
+  mkdir -p $LIB_FRAMEWORK/Headers
+  cp -R $DESTDIR/include/$LIB/ $LIB_FRAMEWORK/Headers
+
+  cp $DESTDIR/lib/$LIB.a $LIB_FRAMEWORK/$LIB
+
+  cat > $LIB_FRAMEWORK/Info.plist << EOF
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>en</string>
+	<key>CFBundleExecutable</key>
+	<string>$LIB</string>
+	<key>CFBundleIdentifier</key>
+	<string>org.ffmpeg.$LIB</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>$LIB</string>
+	<key>CFBundlePackageType</key>
+	<string>FMWK</string>
+	<key>CFBundleShortVersionString</key>
+	<string>0.9</string>
+	<key>CFBundleVersion</key>
+	<string>1</string>
+	<key>CFBundleSignature</key>
+	<string>????</string>
+</dict>
+</plist>
+EOF
+
+  xcodebuild -create-xcframework -framework "$LIB_FRAMEWORK" -output "$DESTDIR/xcframeworks/$LIB.xcframework"
+
+  rm -rf $LIB_FRAMEWORK
 done
 
 for LIB in $EXTERNAL_LIBS_NAMES; do
