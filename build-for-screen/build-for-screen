@@ -50,6 +50,9 @@ export PKG_CONFIG_PATH="$EXTERNAL_LIBRARIES_DIR/lib/pkgconfig"
    --extra-cxxflags='-mmacosx-version-min=10.13' \
    --extra-objcflags='-mmacosx-version-min=10.13' \
    --extra-ldflags='-mmacosx-version-min=10.13 -Z -L/usr/lib -F/System/Library/Frameworks' \
+   --install-name-dir="@rpath/../Frameworks" \
+   --disable-static \
+   --enable-shared \
    --disable-programs \
    --disable-doc \
    --disable-postproc \
@@ -70,14 +73,14 @@ make install || exit $?
 
 cd $SCRIPT_DIR
 
-EXTERNAL_LIBS=$(basename "$EXTERNAL_LIBRARIES_DIR"/lib/*.a)
+EXTERNAL_LIBS=$(basename "$EXTERNAL_LIBRARIES_DIR"/lib/*.dylib)
 EXTERNAL_LIBS_NAMES=""
 
 for LIB in $EXTERNAL_LIBS; do
     EXTERNAL_LIBS_NAMES+="${LIB%.*} "
 done
 
-cp "$EXTERNAL_LIBRARIES_DIR"/lib/*.a "$DESTDIR/lib/"
+cp "$EXTERNAL_LIBRARIES_DIR"/lib/*.dylib "$DESTDIR/lib/"
 rm -rf "$EXTERNAL_LIBRARIES_DIR"
 
 FFMPEG_LIBS="libavcodec libavdevice libavfilter libavformat libavutil libswresample libswscale"
@@ -128,7 +131,7 @@ EOF
 done
 
 for LIB in $EXTERNAL_LIBS_NAMES; do
-  xcodebuild -create-xcframework -library "$DESTDIR/lib/$LIB.a" -output "$DESTDIR/xcframeworks/$LIB.xcframework"
+  xcodebuild -create-xcframework -library "$DESTDIR/lib/$LIB.dylib" -output "$DESTDIR/xcframeworks/$LIB.xcframework"
 done
 
 echo "build-for-screen completed successfully."
